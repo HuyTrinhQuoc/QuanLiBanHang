@@ -1,0 +1,592 @@
+CREATE DATABASE QuanLyNhaHang;
+
+USE QuanLyNhaHang;
+
+CREATE TABLE KhoHang (
+    MaHangHoa VARCHAR(15) NOT NULL,
+    TenHangHoa VARCHAR(50) NOT NULL,
+    NgayNhap DATE NOT NULL,
+    DonVi VARCHAR(50) NOT NULL,
+    SoLuong DOUBLE NOT NULL,
+    ChiPhi DOUBLE NOT NULL,
+    TongChiPhi DOUBLE DEFAULT NULL,
+    PRIMARY KEY (MaHangHoa)
+);
+
+CREATE TABLE NhanVien (
+    MaNV VARCHAR(5) NOT NULL,
+    Password VARCHAR(50) NOT NULL,
+    HoTen VARCHAR(50) NOT NULL,
+    SoDT VARCHAR(15) NOT NULL,
+    ChucVu VARCHAR(50) NOT NULL,
+    GioiTinh BOOLEAN DEFAULT NULL,
+    Avatar VARCHAR(50) DEFAULT NULL,
+    PRIMARY KEY (MaNV)
+);
+
+ALTER TABLE NhanVien
+ADD Active BOOLEAN DEFAULT FALSE;
+
+CREATE TABLE BanAn (
+    MaBan INT NOT NULL,
+    LoaiBan INT NOT NULL,
+    TrangThai VARCHAR(50) NOT NULL,
+    PRIMARY KEY (MaBan)
+);
+
+CREATE TABLE HoaDon (
+    MaHD INT NOT NULL AUTO_INCREMENT,
+    NgayTao DATETIME DEFAULT NULL,
+    MaNV VARCHAR(5) NOT NULL,
+    MaBan INT NOT NULL,
+    TongTien DOUBLE NOT NULL,
+    TrangThai VARCHAR(20) NOT NULL,
+    PRIMARY KEY (MaHD),
+    CONSTRAINT FK_NhanVienHoaDon FOREIGN KEY (MaNV) REFERENCES NhanVien(MaNV),
+    CONSTRAINT FK_BanAnHoaDon FOREIGN KEY (MaBan) REFERENCES BanAn(MaBan)
+);
+
+
+
+CREATE TABLE LoaiThucDon (
+    MaLoaiTD INT NOT NULL AUTO_INCREMENT,
+    Ten VARCHAR(50) NOT NULL,
+    PRIMARY KEY (MaLoaiTD)
+);
+
+CREATE TABLE ThucDon (
+    MaMon VARCHAR(15) NOT NULL,
+    TenMon VARCHAR(50) NOT NULL,
+    GiaTien DOUBLE NOT NULL,
+    HinhAnh VARCHAR(50) NOT NULL,
+    LoaiThucDon INT NOT NULL,
+    PRIMARY KEY (MaMon),
+    FOREIGN KEY (LoaiThucDon) REFERENCES LoaiThucDon(MaLoaiTD)
+);
+
+CREATE TABLE Discount (
+    ID VARCHAR(10) PRIMARY KEY,
+    NumPercent INT,
+    Quantity INT,
+    NgayBD DATE NOT NULL,
+    NgayKT DATE NOT NULL
+);
+
+CREATE TABLE DatBan (
+    MaDatBan INT NOT NULL AUTO_INCREMENT,
+    TenKH VARCHAR(50) NOT NULL,
+    SDTKH VARCHAR(15) NOT NULL,
+    NgayDatBan DATE NOT NULL,
+    GioDat VARCHAR(10),
+    SoNguoi INT NOT NULL,
+    GhiChu VARCHAR(50),
+    MaNV VARCHAR(5),
+    PRIMARY KEY (MaDatBan),
+    FOREIGN KEY (MaNV) REFERENCES NhanVien(MaNV)
+);
+
+CREATE TABLE ChiTietHoaDon (
+    MaHDCT INT NOT NULL AUTO_INCREMENT,
+    MaHD INT NOT NULL,
+    MaMon VARCHAR(15) NOT NULL,
+    SoLuong INT NOT NULL,
+    PRIMARY KEY (MaHDCT),
+    CONSTRAINT FK_HoaDonHDCT FOREIGN KEY (MaHD) REFERENCES HoaDon(MaHD),
+    CONSTRAINT FK_ThucDonHDCT FOREIGN KEY (MaMon) REFERENCES ThucDon(MaMon)
+);
+
+INSERT INTO LoaiThucDon (Ten)
+VALUES 
+    ('Cua'),
+    ('Món khác'),
+    ('Món ăn'),
+    ('Món uống'),
+    ('Súp'),
+    ('Khai vị'),
+    ('Lẩu'),
+    ('Sashimi');
+
+INSERT INTO ThucDon 
+VALUES
+    ('TD01', 'Salad trái cây', 150000, 'saladtraicay.jpg', 1),
+    ('TD02', 'Kim chi cải thảo', 190000, 'kimchi.jpg', 1),
+    ('TD03', 'Cơm cuộn Kimbap', 150000, 'kimbap.jpg', 1),
+    ('TD04', 'Bánh hải sản', 190000, 'banhhaisan.jpg', 1),
+    ('TD05', 'Salad rong biển', 190000, 'saladrongbien.jpg', 1),
+    ('TD07', 'Lươn biển nhật', 150000, 'luonbien.png', 2),
+    ('TD12', 'Trà đào', 119000, 'tradao.jpg', 3),
+    ('TD13', 'Strawberry tea', 150000, 'strawberrytea.jpg', 3),
+    ('TD14', 'Soju', 119000, 'soju.jpg', 3),
+    ('TD15', 'Rượu gạo', 150000, 'ruougao.jpg', 3),
+    ('TD17', 'Râu mục chiên giòn', 119000, 'raumucchien.png', 1),
+    ('TD18', 'Mực vòng chiên giòn', 150000, 'mucvongchien.jpg', 1),
+    ('TD20', 'Salad cá ngừ với trứng', 150000, 'saladcangu.jpg', 1),
+    ('TD28', 'Coca light', 119000, 'cocalight.jpg', 3),
+    ('TD29', 'Sprite', 190000, 'sprite.jpg', 3),
+    ('TD30', 'Nước suối', 119000, 'nuocsuoi.png', 3),
+    ('TD31', 'Bạch tuộc sốt cay', 190000, 'bachtuocsotcay.jpg', 2),
+    ('TD32', 'Mực lá sốt cay', 150000, 'mucsotcay.jpg', 2),
+    ('TD33', 'Cá hồi nướng giấy bạc', 165000, 'cahoi.png', 2),
+    ('TD34', 'Tôm sốt Guang yang', 130000, 'tomsot.jpg', 2),
+    ('TD35', 'Tôm lột vỏ sốt tỏi', 165000, 'tomsottoi.png', 2),
+    ('TD36', 'Cơm trộn Hàn Quốc', 75000, 'comtron.jpg', 2),
+    ('TD37', 'Cơm trộn hải sản', 120000, 'comtronhaisan.jpg', 2),
+    ('TD38', 'Cơm trộng bạch tuộc', 99000, 'comtronbachtuoc.jpg', 2),
+    ('TD39', 'Miến lạnh trộn', 140000, 'mienlanh.jpg', 2),
+    ('TD40', 'Mì Udon xào hải sản', 165000, 'miudon.jpg', 2),
+    ('TD41', 'Miến xào hải sản', 165000, 'mienxao.jpg', 2),
+    ('TD42', 'Canh sườn bò Hàn Quốc', 189000, 'canhsuonbo.jpg', 2),
+    ('TD43', 'Canh rong biển', 119000, 'canhrongbien.jpg', 2),
+    ('TD44', 'Canh kim chi hải sản', 150000, 'canhhaisan.jpg', 2),
+    ('TD46', 'Rau càng cua', 80000, 'raucangcua.jpg', 5),
+    ('TD47', 'Salad dầu dấm', 110000, 'saladdaudam.jpg', 5),
+    ('TD48', 'Salad cá hồi', 100000, 'saladcahoi.jpg', 5),
+    ('TD49', 'Nộm hải sản', 99000, 'monhaisan.jpg', 5),
+    ('TD50', 'Salad rong nha cá ngừ', 130000, 'saladrongnhacangu.jpg', 5),
+    ('TD51', 'Sashimi Bào Ngư', 220000, 'sashimibaongu.jpg', 7),
+    ('TD52', 'Sashimi Cá Cơm Hàn Quốc', 250000, 'sashimicacomhanquoc.jpg', 7),
+    ('TD53', 'Sashimi Cá Hồi', 300000, 'sashimicahoi.jpg', 7),
+    ('TD54', 'Sashimi Hàu Sữa', 250000, 'sashimihausua.jpg', 7),
+    ('TD55', 'Sashimi Tôm Hùm', 1000000, 'sashimitomhum.jpg', 7),
+    ('TD56', 'Sashimi Tôm Sú', 180000, 'sashimitomsu.jpg', 7),
+    ('TD57', 'Cua hoàng đế hấp', 2500000, 'cuahoangdehap.jpg', 8),
+    ('TD58', 'Cua rang me', 300000, 'cuarangme.jpg', 8),
+    ('TD59', 'Cua sốt ớt Singapo', 350000, 'cuasototsing.jpg', 8),
+    ('TD60', 'Cua sốt tiêu đen', 260000, 'cuasottieuden.jpg', 8),
+    ('TD61', 'Ghẹ sốt me', 120000, 'ghesotme.jpg', 8),
+    ('TD62', 'Lẩu hồng công', 250000, 'laucuahongcong.png', 6),
+    ('TD63', 'Lẩu cua thái', 250000, 'laucuathai.jpg', 6),
+    ('TD64', 'Suop Hải Sản', 25000, 'suphaisan.jpg', 4),
+    ('TD65', 'Soup Tôm Bắp', 25000, 'suptombap.jpg', 4);
+
+insert into NhanVien values
+    	('NV01', '202cb962ac59075b964b07152d234b70',N'Nguyễn Nhâm Ngọ','0348888888',N'Quản lý',1,null,1),
+	('NV02', '202cb962ac59075b964b07152d234b70',N'Lưu Quang Khải', '055687954', N'Quản lý', 1,null,1),
+	('NV03', '202cb962ac59075b964b07152d234b70',N'Bùi Đức Minh','0123456789', N'Quản lý', 1,null,1)
+
+insert into BanAn values
+	(1,4,N'Sẵn Sàng'),
+	(2,4,N'Sẵn Sàng'),
+	(3,4,N'Sẵn Sàng'),
+	(4,4,N'Sẵn Sàng'),
+	(5,4,N'Sẵn Sàng'),
+	(6,8,N'Sẵn Sàng'),
+	(7,8,N'Sẵn Sàng'),
+	(8,8,N'Sẵn Sàng'),
+	(9,8,N'Sẵn Sàng'),
+	(10,8,N'Sẵn Sàng'),
+	(11,10,N'Sẵn Sàng'),
+	(12,10,N'Sẵn Sàng'),
+	(13,10,N'Sẵn Sàng'),
+	(14,10,N'Sẵn Sàng')
+
+insert into KhoHang values 
+	('CHEN01',N'Chén sứ minh long','20230803',N'Cái',100,10000,1000000),
+	('DIA',N'Dĩa sứ minh long','20230803',N'Cái',100,10000,1000000),
+	('DUA',N'Đũa nhựa cao cấp','20230803',N'Chiếc',200,10000,2000000),
+	('NIA',N'Nĩa inox cao cấp','20230803',N'Chiếc',200,10000,2000000),
+	('GIAY',N'Giấy ăn vuông','20230803',N'Gói',50,100000,5000000),
+	('BIAHNK',N'Bia Heineken','20230803',N'Thùng',500,600000,300000000),
+	('CUAHD',N'Cua Hoàng Đế','20230821',N'KG',50,2590000,129500000),
+	('TOMHB',N'Tôm Hùm Bông','20230821',N'KG',50,2590000,129500000)
+
+INSERT INTO HoaDon (NgayTao, MaNV, MaBan, TongTien, TrangThai)
+VALUES ('2022-05-14', 'NV01', 1, 150000, N'Đã thanh toán'),
+('2024-05-14', 'NV02', 1, 150000, N'Đã thanh toán'),
+('2023-06-15', 'NV01', 2, 200000, N'Đã thanh toán'),
+('2023-07-16', 'NV03', 3, 120000, N'Đã thanh toán'),
+('2025-08-17', 'NV02', 4, 300000, N'Đã thanh toán'),
+('2023-09-18', 'NV01', 5, 500000, N'Đã thanh toán'),
+('2023-10-19', 'NV02', 6, 180000, N'Đã thanh toán'),
+('2023-11-20', 'NV03', 7, 250000, N'Đã thanh toán'),
+('2023-12-21', 'NV01', 8, 100000, N'Đã thanh toán'),
+('2023-4-22', 'NV01', 9, 450000, N'Đã thanh toán'),
+('2023-3-23', 'NV02', 10, 220000, N'Đã thanh toán')
+
+INSERT INTO HoaDon (NgayTao, MaNV, MaBan, TongTien, TrangThai)
+VALUES ('2022-05-14', 'NV01', 1, 150000, N'Đã thanh toán'),
+('2024-05-14', 'NV02', 1, 150000, N'Chưa thanh toán'),
+('2023-06-15', 'NV01', 2, 200000, N'Chưa thanh toán'),
+('2023-07-16', 'NV03', 3, 120000, N'Chưa thanh toán'),
+('2025-08-17', 'NV02', 4, 300000, N'Chưa thanh toán'),
+('2023-09-18', 'NV01', 5, 500000, N'Chưa thanh toán'),
+('2023-10-19', 'NV02', 6, 180000, N'Chưa thanh toán'),
+('2023-11-20', 'NV03', 7, 250000, N'Chưa thanh toán'),
+('2023-12-21', 'NV01', 8, 100000, N'Chưa thanh toán'),
+('2023-4-22', 'NV01', 9, 450000, N'Chưa thanh toán'),
+('2023-3-23', 'NV02', 10, 220000, N'Chưa thanh toán')
+
+INSERT INTO HoaDon (NgayTao, MaNV, MaBan, TongTien, TrangThai)
+VALUES ('2023-3-23', 'NV02', 11, 220000, N'Chưa thanh toán'),
+('2023-3-23', 'NV02', 9, 220000, N'Chưa thanh toán'),
+('2023-3-23', 'NV02', 11, 220000, N'Chưa thanh toán')
+
+ALTER TABLE nhanvien MODIFY Avatar VARCHAR(255);
+
+DELIMITER //
+
+CREATE PROCEDURE SP_Login(
+    IN MaNV VARCHAR(5),
+    IN Password VARCHAR(50)
+)
+BEGIN
+    SELECT * FROM NhanVien WHERE MaNV = MaNV AND Password = Password;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS SP_Login;
+
+
+DELIMITER $$
+
+CREATE PROCEDURE SP_InsertOrUpdateNhanVien(
+    IN p_MaNV VARCHAR(5),
+    IN p_HoTen VARCHAR(50),
+    IN p_SoDT VARCHAR(15),
+    IN p_ChucVu VARCHAR(50),
+    IN p_GioiTinh TINYINT(1),
+    IN p_Avatar VARCHAR(50),
+    IN p_Active TINYINT(1),
+    OUT p_Status INT
+)
+BEGIN
+    IF EXISTS (SELECT 1 FROM NhanVien WHERE MaNV = p_MaNV) THEN
+        UPDATE NhanVien
+        SET HoTen = p_HoTen,
+            SoDT = p_SoDT,
+            ChucVu = p_ChucVu,
+            GioiTinh = p_GioiTinh,
+            Avatar = p_Avatar,
+            Active = p_Active
+        WHERE MaNV = p_MaNV;
+        SET p_Status = 1; -- Cập nhật
+    ELSE
+        INSERT INTO NhanVien (MaNV, MatKhau, HoTen, SoDT, ChucVu, GioiTinh, Avatar, Active)
+        VALUES (p_MaNV, MD5('1'), p_HoTen, p_SoDT, p_ChucVu, p_GioiTinh, p_Avatar, p_Active);
+        SET p_Status = 2; -- Thêm mới
+    END IF;
+END$$
+
+DELIMITER ;
+
+-- Thủ tục: sp_NVSoBanbyHD
+DELIMITER //
+CREATE PROCEDURE sp_NVSoBanbyHD (IN TrangThai VARCHAR(30), IN MaBan VARCHAR(15))
+BEGIN
+    SELECT MaHD, hd.MaNV , HoTen, NgayTao, TongTien, MaBan, TrangThai
+    FROM HoaDon HD 
+    INNER JOIN NhanVien NV ON HD.MaNV = NV.MaNV
+    WHERE TrangThai LIKE TrangThai AND MaBan = MaBan;
+END;
+//
+DELIMITER ;
+
+- Thủ tục: sp_SoSanhNgay
+DELIMITER //
+CREATE PROCEDURE sp_SoSanhNgay (IN ngayHT VARCHAR(50))
+BEGIN
+    SELECT MaHD, hd.MaNV, HoTen, NgayTao, TongTien, MaBan, TrangThai
+    FROM HoaDon HD 
+    INNER JOIN NhanVien NV ON HD.MaNV = NV.MaNV
+    WHERE TrangThai = 'Đã Thanh Toán'
+      AND NgayTao = ngayHT;
+END;
+//
+DELIMITER ;
+
+-- Gọi thủ tục:
+CALL sp_SoSanhNgay('2021-08-04');
+
+-- Thủ tục: sp_NVbyHD
+DELIMITER //
+CREATE PROCEDURE sp_NVbyHD (IN TrangThai VARCHAR(30))
+BEGIN
+    SELECT MaHD, hd.MaNV , HoTen, NgayTao, TongTien, MaBan, TrangThai
+    FROM HoaDon HD 
+    INNER JOIN NhanVien NV ON HD.MaNV = NV.MaNV
+    WHERE TrangThai LIKE TrangThai;
+
+    SELECT MaHD, hd.MaNV , HoTen, NgayTao, TongTien, MaBan, TrangThai
+    FROM HoaDon HD 
+    INNER JOIN NhanVien NV ON HD.MaNV = NV.MaNV
+    ORDER BY NgayTao DESC;
+END;
+//
+DELIMITER ;
+
+-- Thủ tục: SP_Login
+DELIMITER //
+CREATE PROCEDURE SP_Login (IN MaNV VARCHAR(5), IN `Password` VARCHAR(50))
+BEGIN
+    SELECT * FROM NhanVien 
+    WHERE MaNV = MaNV AND `Password` = `Password`;
+END;
+//
+DELIMITER ;
+
+-- Thủ tục: SP_InsertOrUpdateThucDon
+DELIMITER //
+CREATE PROCEDURE SP_InsertOrUpdateThucDon(
+    IN MaMon VARCHAR(15),
+    IN TenMon VARCHAR(50),
+    IN GiaTien FLOAT,
+    IN HinhAnh VARCHAR(50),
+    IN LoaiThucDon INT
+)
+BEGIN
+    IF (SELECT COUNT(*) FROM ThucDon WHERE MaMon = MaMon) > 0 THEN
+        UPDATE ThucDon
+        SET TenMon = TenMon,
+            GiaTien = GiaTien,
+            HinhAnh = HinhAnh,
+            LoaiThucDon = LoaiThucDon
+        WHERE MaMon = MaMon;
+    ELSE
+        INSERT INTO ThucDon (MaMon, TenMon, GiaTien, HinhAnh, LoaiThucDon)
+        VALUES (MaMon, TenMon, GiaTien, HinhAnh, LoaiThucDon);
+    END IF;
+END;
+//
+DELIMITER ;
+
+
+-- Thủ tục: SP_InsertOrUpdateDatBan
+DELIMITER //
+CREATE PROCEDURE SP_InsertOrUpdateDatBan(
+    IN MaDatBan INT,
+    IN TenKH VARCHAR(50),
+    IN SDTKH VARCHAR(15),
+    IN NgayDatBan DATE,
+    IN GioDat VARCHAR(10),
+    IN SoNguoi INT,
+    IN GhiChu VARCHAR(50),
+    IN MaNV VARCHAR(5)
+)
+BEGIN
+    IF (SELECT COUNT(*) FROM DatBan WHERE MaDatBan = MaDatBan) > 0 THEN
+        UPDATE DatBan
+        SET TenKH = TenKH,
+            SDTKH = SDTKH,
+            NgayDatBan = NgayDatBan,
+            GioDat = GioDat,
+            GhiChu = GhiChu,
+            MaNV = MaNV
+        WHERE MaDatBan = MaDatBan;
+    ELSE
+        INSERT INTO DatBan (TenKH, SDTKH, NgayDatBan, GioDat, SoNguoi, GhiChu, MaNV)
+        VALUES (TenKH, SDTKH, NgayDatBan, GioDat, SoNguoi, GhiChu, MaNV);
+    END IF;
+END;
+//
+DELIMITER ;
+
+-- Thủ tục: SP_InsertOrUpdateKhoHang
+DELIMITER //
+CREATE PROCEDURE SP_InsertOrUpdateKhoHang(
+    IN MaHangHoa VARCHAR(15),
+    IN TenHangHoa VARCHAR(50),
+    IN NgayNhap DATE,
+    IN DonVi VARCHAR(50),
+    IN SoLuong INT,
+    IN ChiPhi FLOAT,
+    IN TongChiPhi FLOAT
+)
+BEGIN
+    IF (SELECT COUNT(*) FROM KhoHang WHERE MaHangHoa = MaHangHoa) > 0 THEN
+        UPDATE KhoHang
+        SET TenHangHoa = TenHangHoa,
+            NgayNhap = NgayNhap,
+            DonVi = DonVi,
+            SoLuong = SoLuong,
+            ChiPhi = ChiPhi,
+            TongChiPhi = TongChiPhi
+        WHERE MaHangHoa = MaHangHoa;
+    ELSE
+        INSERT INTO KhoHang (MaHangHoa, TenHangHoa, NgayNhap, DonVi, SoLuong, ChiPhi, TongChiPhi)
+        VALUES (MaHangHoa, TenHangHoa, NgayNhap, DonVi, SoLuong, ChiPhi, TongChiPhi);
+    END IF;
+END;
+//
+DELIMITER ;
+
+CREATE PROC SP_InsertOrUpdateBanAn
+	@MaBan int,
+	@LoaiBan int,
+	@TrangThai nvarchar(50)
+AS
+BEGIN
+	IF EXISTS(SELECT * FROM BanAn WHERE MaBan = @MaBan)
+		UPDATE BanAn
+		SET LoaiBan = @LoaiBan, TrangThai = @TrangThai
+		WHERE MaBan = @MaBan
+	ELSE
+		INSERT INTO BanAn (MaBan, LoaiBan, TrangThai)
+		VALUES (@MaBan, @LoaiBan, @TrangThai)
+END
+
+INSERT INTO HoaDon (NgayTao, MaNV, MaBan, TongTien, TrangThai)
+VALUES ('2022-05-14', 'NV01', 1, 150000, N'Đã thanh toán'),
+('2024-05-14', 'NV02', 1, 150000, N'Đã thanh toán'),
+('2023-06-15', 'NV01', 2, 200000, N'Đã thanh toán'),
+('2023-07-16', 'NV03', 3, 120000, N'Đã thanh toán'),
+('2025-08-17', 'NV02', 4, 300000, N'Đã thanh toán'),
+('2023-09-18', 'NV01', 5, 500000, N'Đã thanh toán'),
+('2023-10-19', 'NV02', 6, 180000, N'Đã thanh toán'),
+('2023-11-20', 'NV03', 7, 250000, N'Đã thanh toán'),
+('2023-12-21', 'NV01', 8, 100000, N'Đã thanh toán'),
+('2023-4-22', 'NV01', 9, 450000, N'Đã thanh toán'),
+('2023-3-23', 'NV02', 10, 220000, N'Đã thanh toán')
+
+DELIMITER //
+
+CREATE TRIGGER TRG_CapNhatTrangThaiBanAn
+AFTER INSERT ON HoaDon
+FOR EACH ROW
+BEGIN
+    IF NEW.TrangThai = 'Chưa thanh toán' THEN
+        UPDATE BanAn
+        SET TrangThai = 'Hoạt Động'
+        WHERE MaBan = NEW.MaBan;
+    ELSEIF NEW.TrangThai = 'Đã thanh toán' THEN
+        UPDATE BanAn
+        SET TrangThai = 'Sẵn Sàng'
+        WHERE MaBan = NEW.MaBan;
+    END IF;
+END;
+//
+
+DELIMITER ;
+
+INSERT INTO HoaDon (NgayTao, MaNV, MaBan, TongTien, TrangThai)
+VALUES ('2022-05-14', 'NV01', 1, 150000, N'Đã thanh toán'),
+('2024-05-14', 'NV02', 1, 150000, N'Chưa thanh toán'),
+('2023-06-15', 'NV01', 2, 200000, N'Chưa thanh toán'),
+('2023-07-16', 'NV03', 3, 120000, N'Chưa thanh toán'),
+('2025-08-17', 'NV02', 4, 300000, N'Chưa thanh toán'),
+('2023-09-18', 'NV01', 5, 500000, N'Chưa thanh toán'),
+('2023-10-19', 'NV02', 6, 180000, N'Chưa thanh toán'),
+('2023-11-20', 'NV03', 7, 250000, N'Chưa thanh toán'),
+('2023-12-21', 'NV01', 8, 100000, N'Chưa thanh toán'),
+('2023-4-22', 'NV01', 9, 450000, N'Chưa thanh toán'),
+('2023-3-23', 'NV02', 10, 220000, N'Chưa thanh toán')
+INSERT INTO HoaDon (NgayTao, MaNV, MaBan, TongTien, TrangThai)
+VALUES ('2023-3-23', 'NV02', 11, 220000, N'Chưa thanh toán'),
+('2023-3-23', 'NV02', 9, 220000, N'Chưa thanh toán'),
+('2023-3-23', 'NV02', 11, 220000, N'Chưa thanh toán')
+
+DELIMITER //
+
+CREATE PROCEDURE usp_SelectDoanhThuTheoNam(IN Nam INT)
+BEGIN
+    SELECT *
+    FROM HoaDon
+    WHERE YEAR(NgayTao) = Nam
+    ORDER BY NgayTao;
+END;
+//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE InsertHD(IN MaNV VARCHAR(5), IN MaBan INT)
+BEGIN
+    INSERT INTO HoaDon (NgayTao, MaNV, MaBan, TongTien, TrangThai)
+    VALUES (NOW(), MaNV, MaBan, 0, N'Chưa thanh toán');
+END;
+//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE InsertCTHD(IN MaHD INT, IN MaMon VARCHAR(15), IN SL INT)
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM ChiTietHoaDon
+        WHERE MaHD = MaHD AND MaMon = MaMon
+    ) THEN
+        UPDATE ChiTietHoaDon
+        SET SoLuong = SoLuong + SL
+        WHERE MaHD = MaHD AND MaMon = MaMon;
+    ELSE
+        INSERT INTO ChiTietHoaDon (MaHD, MaMon, SoLuong)
+        VALUES (MaHD, MaMon, SL);
+    END IF;
+END;
+//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER TG_ChiTietHoaDon_TongTienHoaDon
+AFTER INSERT ON ChiTietHoaDon
+FOR EACH ROW
+BEGIN
+    UPDATE HoaDon hd
+    JOIN ThucDon td ON td.MaMon = NEW.MaMon
+    SET hd.TongTien = hd.TongTien + (td.GiaTien * NEW.SoLuong)
+    WHERE hd.MaHD = NEW.MaHD;
+END;
+//
+
+CREATE TRIGGER TG_ChiTietHoaDon_TongTienHoaDon_Update
+AFTER UPDATE ON ChiTietHoaDon
+FOR EACH ROW
+BEGIN
+    -- Trừ giá trị cũ
+    UPDATE HoaDon hd
+    JOIN ThucDon td ON td.MaMon = OLD.MaMon
+    SET hd.TongTien = hd.TongTien - (td.GiaTien * OLD.SoLuong)
+    WHERE hd.MaHD = OLD.MaHD;
+
+    -- Cộng giá trị mới
+    UPDATE HoaDon hd
+    JOIN ThucDon td ON td.MaMon = NEW.MaMon
+    SET hd.TongTien = hd.TongTien + (td.GiaTien * NEW.SoLuong)
+    WHERE hd.MaHD = NEW.MaHD;
+END;
+//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER TG_ChiTietHoaDon_TongTienHoaDon_Delete
+AFTER DELETE ON ChiTietHoaDon
+FOR EACH ROW
+BEGIN
+    UPDATE HoaDon hd
+    JOIN ThucDon td ON td.MaMon = OLD.MaMon
+    SET hd.TongTien = hd.TongTien - (td.GiaTien * OLD.SoLuong)
+    WHERE hd.MaHD = OLD.MaHD;
+END;
+//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE SP_SelectChiTietHoaDonByIdBan(IN MaBan INT)
+BEGIN
+    SELECT 
+        ctd.MaHDCT,
+        td.MaMon,
+        hd.MaHD,
+        ctd.SoLuong,
+        td.TenMon,
+        td.GiaTien,
+        hd.MaBan
+    FROM HoaDon hd
+    JOIN ChiTietHoaDon ctd ON hd.MaHD = ctd.MaHD
+    JOIN ThucDon td ON ctd.MaMon = td.MaMon
+    WHERE hd.MaBan = MaBan
+      AND hd.TrangThai = 'Chưa thanh toán';
+END;
+//
+
+DELIMITER ;
+
